@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>9ja News | Latest Updates</title>
     
-    <!-- Base CSS for Layout & Styling -->
     <style>
         :root { 
             --9ja-green: #4CAF50; 
@@ -20,7 +19,6 @@
             color: var(--text-dark);
         }
 
-        /* Header & Search */
         header { 
             background: var(--9ja-green); 
             color: white; 
@@ -55,7 +53,6 @@
         }
         .header-icon { font-size: 20px; cursor: pointer; }
 
-        /* Ticker */
         .trending-bar { 
             background: #fff; 
             border-bottom: 1px solid #ddd; 
@@ -64,7 +61,6 @@
             font-weight: bold; 
         }
 
-        /* Main Container */
         main { 
             max-width: 800px; 
             margin: 0 auto; 
@@ -73,7 +69,6 @@
             min-height: 100vh;
         }
 
-        /* Ads */
         .ad-container { 
             background: #eee; 
             text-align: center; 
@@ -84,12 +79,10 @@
             border: 1px dashed #ccc;
         }
 
-        /* Hero Article */
         .hero { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
         .hero img { width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; }
         .hero h1 { font-size: 28px; font-weight: 900; margin: 15px 0 5px 0; line-height: 1.2; }
 
-        /* News Feeds */
         section { margin-top: 30px; }
         h2 { font-size: 20px; border-left: 4px solid var(--9ja-green); padding-left: 10px; margin-bottom: 15px; }
         
@@ -120,55 +113,47 @@
             overflow: hidden;
         }
 
-        /* Footer */
         footer { text-align: center; padding: 30px; color: #666; font-size: 14px; }
         footer a { color: #666; text-decoration: none; margin: 0 10px; }
     </style>
 </head>
 <body>
 
-    <!-- Header & Navigation -->
     <header>
         <div class="header-icon menu">☰</div>
         <a href="index.html" class="header-logo">9ja News</a>
-        
         <div class="search-wrapper">
             <input type="text" id="search-input" placeholder="Search news...">
             <div class="header-icon search" id="search-btn">🔍</div>
         </div>
     </header>
 
-    <!-- Trending Bar -->
     <div class="trending-bar">
         <marquee id="dynamic-ticker" behavior="scroll" direction="left" scrollamount="4">
             Loading latest updates...
         </marquee>
     </div>
 
-    <!-- Main Content Area -->
     <main>
         <div class="ad-container">[ 728x90 Leaderboard Ad ]</div>
 
-        <!-- DEFAULT HOMEPAGE VIEW -->
         <div id="home-view">
-            <!-- Latest News Hero -->
             <div id="hero-target"></div>
 
-            <!-- Auto-populated Sections -->
-            <section id="LocalNews-section">
-                <h2 id="LocalNews-head" style="display:none;">Local News</h2>
-                <div class="feed-list" id="LocalNews-feed"></div>
+            <!-- IDs updated to match your new folder structure -->
+            <section id="local-news-section">
+                <h2 id="local-news-head" style="display:none;">Local News</h2>
+                <div class="feed-list" id="local-news-feed"></div>
             </section>
 
             <div class="ad-container">[ 300x250 In-Feed Ad ]</div>
 
-            <section id="sport-section">
-                <h2 id="sport-head" style="display:none;">Sports</h2>
-                <div class="feed-list" id="sport-feed"></div>
+            <section id="sports-section">
+                <h2 id="sports-head" style="display:none;">Sports</h2>
+                <div class="feed-list" id="sports-feed"></div>
             </section>
         </div>
 
-        <!-- SEARCH RESULTS VIEW (Hidden initially) -->
         <div id="search-view" style="display: none;">
             <h2 id="search-title" style="margin-bottom: 20px;">Search Results</h2>
             <div class="feed-list" id="search-feed"></div>
@@ -183,27 +168,24 @@
         <p>&copy; 2026 9ja News. All rights reserved.</p>
     </footer>
 
-    <!-- The 9ja News Engine -->
     <script>
-        let globalArticles = []; // Stores all fetched articles for the search engine
+        let globalArticles = [];
 
         async function fetchAndRender() {
             try {
-                // 1. Fetch your master JSON file from the root directory
                 const res = await fetch('./articles.json');
                 if (!res.ok) throw new Error("Could not find articles.json");
                 
                 const manifest = await res.json();
 
-                // 2. Iterate through each item defined in your articles.json
                 for (const item of manifest) {
                     try {
-                        const articleRes = await fetch(item.path);
+                        // We add .html back here so the fetch finds the actual file
+                        const fullPath = item.path.endsWith('.html') ? item.path : `${item.path}.html`;
+                        const articleRes = await fetch(fullPath);
                         if (!articleRes.ok) continue;
 
                         const html = await articleRes.text();
-                        
-                        // Parse the HTML content to extract metadata (SEO tags)
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, 'text/html');
                         
@@ -211,24 +193,22 @@
                             title: doc.querySelector('title')?.innerText || "Latest News",
                             image: doc.querySelector('meta[property="og:image"]')?.content || "https://via.placeholder.com/1000x450?text=9ja+News",
                             excerpt: doc.querySelector('meta[name="description"]')?.content || "",
-                            link: item.path,
-                            category: item.category, // e.g., 'local' or 'sport'
+                            link: fullPath,
+                            category: item.category, // Matches 'local' or 'sport' from your JSON
                             date: doc.querySelector('meta[property="article:published_time"]')?.content || "2000-01-01"
                         });
                     } catch (err) {
-                        console.warn(`Error processing article at ${item.path}:`, err);
+                        console.warn(`Error processing ${item.path}:`, err);
                     }
                 }
 
-                // Sort articles: Newest first based on published time
                 globalArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
 
                 if (globalArticles.length === 0) {
-                    document.getElementById('dynamic-ticker').innerText = "System Ready: No articles found in articles.json.";
+                    document.getElementById('dynamic-ticker').innerText = "System Ready: No articles found.";
                     return;
                 }
 
-                // 3. Render the News Ticker and Hero Article
                 document.getElementById('dynamic-ticker').innerText = `LATEST: ${globalArticles[0].title}`;
                 document.getElementById('hero-target').innerHTML = `
                     <article class="hero">
@@ -240,32 +220,30 @@
                     </article>
                 `;
 
-                // 4. Distribute the remaining articles into Category Feeds
                 globalArticles.forEach((article, index) => {
-                    if (index === 0) return; // Skip the newest one (it's the Hero)
+                    if (index === 0) return;
 
                     const card = createCardHTML(article);
                     
-                    // Map JSON category string to HTML element IDs
-                    let targetFeedId = article.category === 'local' ? 'LocalNews-feed' : 'sport-feed';
-                    let targetHeadId = article.category === 'local' ? 'LocalNews-head' : 'sport-head';
+                    // Logic updated: 'local' category -> 'local-news-feed', others -> 'sports-feed'
+                    let targetFeedId = article.category === 'local' ? 'local-news-feed' : 'sports-feed';
+                    let targetHeadId = article.category === 'local' ? 'local-news-head' : 'sports-head';
                     
                     const feed = document.getElementById(targetFeedId);
                     const head = document.getElementById(targetHeadId);
                     
                     if (feed) {
                         feed.innerHTML += card;
-                        head.style.display = 'block'; // Reveal the header now that it has content
+                        head.style.display = 'block';
                     }
                 });
 
             } catch (e) {
-                console.error("Critical System Error:", e);
-                document.getElementById('dynamic-ticker').innerText = "System Error: articles.json is missing or improperly formatted.";
+                console.error(e);
+                document.getElementById('dynamic-ticker').innerText = "System Error: articles.json check failed.";
             }
         }
 
-        // Helper function to generate the HTML for a news card
         function createCardHTML(article) {
             return `
                 <div class="news-card">
@@ -279,13 +257,12 @@
                 </div>`;
         }
 
-        // --- SEARCH ENGINE LOGIC ---
+        // Search Engine Logic
         const searchBtn = document.getElementById('search-btn');
         const searchInput = document.getElementById('search-input');
         const homeView = document.getElementById('home-view');
         const searchView = document.getElementById('search-view');
         const searchFeed = document.getElementById('search-feed');
-        const searchTitle = document.getElementById('search-title');
 
         searchBtn.addEventListener('click', () => {
             if (searchInput.style.display === 'none' || searchInput.style.display === '') {
@@ -301,32 +278,21 @@
 
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
-
             if (query === '') {
                 homeView.style.display = 'block';
                 searchView.style.display = 'none';
                 return;
             }
-
             homeView.style.display = 'none';
             searchView.style.display = 'block';
-
-            // Filter global articles array based on title or excerpt
             const results = globalArticles.filter(article => 
                 article.title.toLowerCase().includes(query) || 
                 article.excerpt.toLowerCase().includes(query)
             );
-
-            searchTitle.innerText = `Search Results for "${query}" (${results.length})`;
-            
-            if (results.length === 0) {
-                searchFeed.innerHTML = `<p style="padding: 20px; color: #666; font-style: italic;">No articles found matching your query.</p>`;
-            } else {
-                searchFeed.innerHTML = results.map(article => createCardHTML(article)).join('');
-            }
+            document.getElementById('search-title').innerText = `Search: "${query}" (${results.length})`;
+            searchFeed.innerHTML = results.length === 0 ? `<p>No results.</p>` : results.map(createCardHTML).join('');
         });
 
-        // Run the news engine on page load
         fetchAndRender();
     </script>
 </body>
