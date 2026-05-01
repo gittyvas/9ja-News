@@ -1,0 +1,111 @@
+/* assets/css/style.css */
+:root {
+    --primary: #90EE90; /* Light Green */
+    --bg-white: #ffffff;
+    --text-dark: #1a1a1a;
+    --border-light: #eee;
+    --gray-bg: #f9f9f9;
+}
+
+body {
+    font-family: 'Inter', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-white);
+    color: var(--text-dark);
+}
+
+/* 1. Light Green Header */
+header {
+    background-color: var(--primary);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.header-logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+}
+.header-icon { font-size: 20px; cursor: pointer; }
+
+/* 2. Trending Bar */
+.trending-bar {
+    background-color: var(--gray-bg);
+    border-bottom: 1px solid var(--border-light);
+    padding: 5px 20px;
+    font-size: 13px;
+    color: #555;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* Ad Placements */
+.ad-container {
+    background-color: var(--gray-bg);
+    border: 1px solid var(--border-light);
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #888;
+}
+.ad-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+.ad-leaderboard { width: 100%; max-width: 728px; height: 90px; }
+.ad-infeed { width: 100%; max-width: 300px; height: 250px; }
+.ad-sidebar { width: 300px; height: 600px; margin-top: 0; }
+
+/* Mobile Ad Adjustments */
+@media (max-width: 768px) {
+    .ad-leaderboard { max-width: 320px; height: 50px; }
+    .ad-sidebar { display: none; }
+}
+
+/* Typography & Cleanliness */
+main { max-width: 1000px; margin: 0 auto; padding: 20px; }
+h1, h2, h3 { margin: 0; }
+a { color: inherit; text-decoration: none; }
+
+/* Layouts */
+.hero { margin-bottom: 30px; }
+.hero img { width: 100%; height: auto; max-height: 450px; object-fit: cover; }
+.hero h1 { font-size: 32px; margin-top: 15px; }
+
+.feed-list { display: flex; flex-direction: column; gap: 15px; margin-top: 15px; }
+.news-card {
+    display: flex;
+    gap: 15px;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 15px;
+}
+.news-card img { width: 120px; height: 80px; object-fit: cover; background: var(--border-light); }
+.news-card-content h3 { font-size: 18px; margin-bottom: 5px; }
+.news-card-content p { font-size: 14px; color: #666; margin: 0; }
+
+section { margin-top: 40px; }
+section h2 { border-left: 4px solid var(--primary); padding-left: 10px; font-size: 22px; }
+
+/* Article Template Grid */
+.article-grid { display: grid; grid-template-columns: 1fr 300px; gap: 30px; }
+@media (max-width: 768px) { .article-grid { grid-template-columns: 1fr; } }
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border-light);
+    text-align: center;
+    padding: 30px 20px;
+    margin-top: 40px;
+    font-size: 14px;
+}
+footer a { margin: 0 10px; color: #555; }
