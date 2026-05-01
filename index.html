@@ -188,24 +188,22 @@
         let globalArticles = []; // Stores all fetched articles for the search engine
 
         async function fetchAndRender() {
-            // Folders to scan
-            const categories = ['sport', 'LocalNews'];
-            
-            for (const cat of categories) {
-                try {
-                    // CRITICAL: Ensure you have a list.json in each of these folders
-                    // containing an array of your HTML filenames (e.g., ["news1.html", "news2.html"])
-                    const listRes = await fetch(`./articles/${cat}/list.json`);
-                    if (!listRes.ok) continue; // Skip if manifest is missing
-                    
-                    const files = await listRes.json();
+            try {
+                // 1. Fetch your master JSON file from the root directory
+                const res = await fetch('./articles.json');
+                if (!res.ok) throw new Error("Could not find articles.json");
+                
+                const manifest = await res.json();
 
-                    for (const file of files) {
-                        const articlePath = `./articles/${cat}/${file}`;
-                        const res = await fetch(articlePath);
-                        const html = await res.text();
+                // 2. Iterate through each item defined in your articles.json
+                for (const item of manifest) {
+                    try {
+                        const articleRes = await fetch(item.path);
+                        if (!articleRes.ok) continue;
+
+                        const html = await articleRes.text();
                         
-                        // Parse HTML to grab Metadata
+                        // Parse the HTML content to extract metadata (SEO tags)
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, 'text/html');
                         
@@ -213,54 +211,61 @@
                             title: doc.querySelector('title')?.innerText || "Latest News",
                             image: doc.querySelector('meta[property="og:image"]')?.content || "https://via.placeholder.com/1000x450?text=9ja+News",
                             excerpt: doc.querySelector('meta[name="description"]')?.content || "",
-                            link: articlePath,
-                            category: cat,
+                            link: item.path,
+                            category: item.category, // e.g., 'local' or 'sport'
                             date: doc.querySelector('meta[property="article:published_time"]')?.content || "2000-01-01"
                         });
+                    } catch (err) {
+                        console.warn(`Error processing article at ${item.path}:`, err);
                     }
-                } catch (e) {
-                    console.warn(`Could not load category: ${cat}`, e);
                 }
-            }
 
-            // Sort newest to oldest
-            globalArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
+                // Sort articles: Newest first based on published time
+                globalArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            if (globalArticles.length === 0) {
-                document.getElementById('dynamic-ticker').innerText = "System Ready: Upload articles to folders to populate home page.";
-                return;
-            }
-
-            // 1. Render Ticker
-            document.getElementById('dynamic-ticker').innerText = `LATEST: ${globalArticles[0].title}`;
-
-            // 2. Render Hero
-            document.getElementById('hero-target').innerHTML = `
-                <article class="hero">
-                    <a href="${globalArticles[0].link}" style="text-decoration:none; color:inherit;">
-                        <img src="${globalArticles[0].image}" alt="Latest Update">
-                        <h1>${globalArticles[0].title}</h1>
-                        <p style="color:#666; font-size: 15px;">${globalArticles[0].excerpt}</p>
-                    </a>
-                </article>
-            `;
-
-            // 3. Render Feeds
-            globalArticles.forEach((article, index) => {
-                if (index === 0) return; // Skip Hero
-
-                const card = createCardHTML(article);
-                const feed = document.getElementById(`${article.category}-feed`);
-                const head = document.getElementById(`${article.category}-head`);
-                
-                if (feed) {
-                    feed.innerHTML += card;
-                    head.style.display = 'block'; // Show category header if it has posts
+                if (globalArticles.length === 0) {
+                    document.getElementById('dynamic-ticker').innerText = "System Ready: No articles found in articles.json.";
+                    return;
                 }
-            });
+
+                // 3. Render the News Ticker and Hero Article
+                document.getElementById('dynamic-ticker').innerText = `LATEST: ${globalArticles[0].title}`;
+                document.getElementById('hero-target').innerHTML = `
+                    <article class="hero">
+                        <a href="${globalArticles[0].link}" style="text-decoration:none; color:inherit;">
+                            <img src="${globalArticles[0].image}" alt="Latest Update">
+                            <h1>${globalArticles[0].title}</h1>
+                            <p style="color:#666; font-size: 15px;">${globalArticles[0].excerpt}</p>
+                        </a>
+                    </article>
+                `;
+
+                // 4. Distribute the remaining articles into Category Feeds
+                globalArticles.forEach((article, index) => {
+                    if (index === 0) return; // Skip the newest one (it's the Hero)
+
+                    const card = createCardHTML(article);
+                    
+                    // Map JSON category string to HTML element IDs
+                    let targetFeedId = article.category === 'local' ? 'LocalNews-feed' : 'sport-feed';
+                    let targetHeadId = article.category === 'local' ? 'LocalNews-head' : 'sport-head';
+                    
+                    const feed = document.getElementById(targetFeedId);
+                    const head = document.getElementById(targetHeadId);
+                    
+                    if (feed) {
+                        feed.innerHTML += card;
+                        head.style.display = 'block'; // Reveal the header now that it has content
+                    }
+                });
+
+            } catch (e) {
+                console.error("Critical System Error:", e);
+                document.getElementById('dynamic-ticker').innerText = "System Error: articles.json is missing or improperly formatted.";
+            }
         }
 
-        // Helper to generate article cards
+        // Helper function to generate the HTML for a news card
         function createCardHTML(article) {
             return `
                 <div class="news-card">
@@ -287,7 +292,6 @@
                 searchInput.style.display = 'block';
                 searchInput.focus();
             } else {
-                // Close and reset
                 searchInput.style.display = 'none';
                 searchInput.value = '';
                 homeView.style.display = 'block';
@@ -307,7 +311,7 @@
             homeView.style.display = 'none';
             searchView.style.display = 'block';
 
-            // Filter array
+            // Filter global articles array based on title or excerpt
             const results = globalArticles.filter(article => 
                 article.title.toLowerCase().includes(query) || 
                 article.excerpt.toLowerCase().includes(query)
@@ -322,7 +326,7 @@
             }
         });
 
-        // Initialize the site
+        // Run the news engine on page load
         fetchAndRender();
     </script>
 </body>
