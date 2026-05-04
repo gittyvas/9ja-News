@@ -7,29 +7,56 @@ const articles = JSON.parse(fs.readFileSync("./data/articles.json", "utf-8"));
 const homeTemplate = fs.readFileSync("./templates/index-template.html", "utf-8");
 const articleTemplate = fs.readFileSync("./templates/article-template.html", "utf-8");
 
-const dist = "./dist";
+const distDir = "./dist";
 const articleOut = "./dist/articles";
 
-fs.mkdirSync(dist, { recursive: true });
+fs.mkdirSync(distDir, { recursive: true });
 fs.mkdirSync(articleOut, { recursive: true });
 
-/* =========================
-   SORT ARTICLES (LATEST FIRST)
-========================= */
-const sorted = articles.sort((a, b) =>
-  new Date(b.datePublished) - new Date(a.datePublished)
-);
+/* =========================================================
+   1. DISCOVER-LIKE SCORING SYSTEM
+========================================================= */
+function scoreArticle(article) {
+  let score = 0;
 
-/* =========================
-   BUILD ARTICLE PAGES
-========================= */
-sorted.forEach(article => {
+  const daysOld =
+    (Date.now() - new Date(article.datePublished)) / (1000 * 60 * 60 * 24);
+
+  // freshness boost (newer = higher score)
+  score += Math.max(0, 10 - daysOld);
+
+  // quality signals
+  if (article.image) score += 3;
+  if (article.description && article.description.length > 50) score += 2;
+  if (article.content && article.content.length > 500) score += 3;
+
+  return score;
+}
+
+/* =========================================================
+   2. PREPARE ARTICLES (WITH SCORES)
+========================================================= */
+const ranked = articles
+  .map(a => ({ ...a, score: scoreArticle(a) }))
+  .sort((a, b) => b.score - a.score);
+
+/* =========================================================
+   3. AUTO RELATED ARTICLES
+========================================================= */
+function getRelated(article, all) {
+  return all
+    .filter(a => a.slug !== article.slug)
+    .slice(0, 2);
+}
+
+/* =========================================================
+   4. BUILD ARTICLE PAGES
+========================================================= */
+ranked.forEach(article => {
 
   const canonical = `${config.baseUrl}/articles/${article.slug}.html`;
 
-  const related = sorted
-    .filter(a => a.slug !== article.slug)
-    .slice(0, 2);
+  const related = getRelated(article, ranked);
 
   const html = articleTemplate
     .replace(/__TITLE__/g, article.title)
@@ -50,11 +77,11 @@ sorted.forEach(article => {
   );
 });
 
-/* =========================
-   BUILD HOMEPAGE
-========================= */
-const latest = sorted[0];
-const rest = sorted.slice(1);
+/* =========================================================
+   5. BUILD HOMEPAGE (HERO + GRID)
+========================================================= */
+const latest = ranked[0];
+const rest = ranked.slice(1);
 
 const grid = rest.map(article => `
 <div class="grid-item">
@@ -73,6 +100,12 @@ const homepage = homeTemplate
   .replace(/{{LATEST_DESCRIPTION}}/g, latest.description)
   .replace(/{{ALL_ARTICLES_GRID}}/g, grid);
 
-fs.writeFileSync(path.join(dist, "index.html"), homepage);
+/* =========================================================
+   6. WRITE HOMEPAGE
+========================================================= */
+fs.writeFileSync(
+  path.join(distDir, "index.html"),
+  homepage
+);
 
-console.log("✅ Build complete - site generated in /dist");
+console.log("✅ BUILD COMPLETE — SITE GENERATED IN /dist");
