@@ -22,13 +22,13 @@
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="675">
 
-    <!-- TWITTER CARD -->
+    <!-- TWITTER -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="__TITLE__">
     <meta name="twitter:description" content="__DESCRIPTION__">
     <meta name="twitter:image" content="__IMAGE_URL__">
 
-    <!-- STRUCTURED DATA (DISCOVER SIGNAL CORE) -->
+    <!-- STRUCTURED DATA -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -44,7 +44,6 @@
       "author": {
         "@type": "Person",
         "name": "Ifeanyi Clement Okoye",
-        "jobTitle": "Editor",
         "url": "https://blog.pluse.name.ng/authors/ifeanyi-okoye"
       },
       "publisher": {
@@ -59,52 +58,56 @@
     }
     </script>
 
+    <!-- CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+
 </head>
 
 <body>
 
 <!-- HEADER -->
-<header>
-    <h1>__TITLE__</h1>
-
-    <!-- ✅ IMPORTANT UPGRADE: AUTHOR LINK ADDED -->
-    <p>
-        By 
-        <a href="https://blog.pluse.name.ng/authors/ifeanyi-okoye" rel="author">
-            Ifeanyi Clement Okoye
-        </a>
-        • __DISPLAY_DATE__
-    </p>
+<header class="header">
+    <a href="/" class="header-title">9ja News</a>
 </header>
 
-<!-- ARTICLE -->
-<article>
+<!-- PAGE WRAPPER -->
+<main class="page-wrapper">
+    <div class="content-container">
 
-    <!-- FEATURE IMAGE -->
-    <img src="__IMAGE_URL__" alt="__TITLE__" width="1200" height="675" loading="eager">
+        <article class="article-card">
 
-    <!-- INTRO PARAGRAPH -->
-    <p>__INTRO_PARAGRAPH__</p>
+            <h1 class="main-article-title">__TITLE__</h1>
 
-    <!-- MAIN CONTENT -->
-    <div>
-        __CONTENT__
+            <div class="main-article-meta">
+                By Ifeanyi Clement Okoye • __DISPLAY_DATE__
+            </div>
+
+            <div class="featured-image-container">
+                <img src="__IMAGE_URL__" alt="__TITLE__" class="featured-image">
+            </div>
+
+            <p class="article-snippet">
+                __INTRO_PARAGRAPH__
+            </p>
+
+            <div class="article-body">
+                __CONTENT__
+            </div>
+
+            <div class="sub-card">
+                <div class="sub-card-header">Related Articles</div>
+
+                <a href="__RELATED_1__">Related Article</a><br>
+                <a href="__RELATED_2__">Related Article</a>
+            </div>
+
+        </article>
+
     </div>
+</main>
 
-    <!-- INTERNAL LINKS -->
-    <div>
-        <a href="__RELATED_1__">Related Article</a>
-        <a href="__RELATED_2__">Related Article</a>
-    </div>
-
-</article>
-
-<!-- FOOTER -->
-<footer>
-    <a href="/about.html">About</a> |
-    <a href="/privacy.html">Privacy Policy</a> |
-    <a href="/contact.html">Contact</a>
-</footer>
+<!-- JS -->
+<script src="/assets/js/script.js"></script>
 
 </body>
 </html>
