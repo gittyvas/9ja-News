@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>9ja News</title>
+
+    <meta name="description" content="Latest news, sports, politics and trending stories from 9ja News.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://blog.pluse.name.ng/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="9ja News">
+    <meta property="og:title" content="9ja News - Latest Updates">
+    <meta property="og:description" content="Breaking news and trending stories in Nigeria and beyond.">
+    <meta property="og:url" content="https://blog.pluse.name.ng/">
+    <meta property="og:image" content="{{LATEST_IMAGE}}">
+
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+
+<header class="header">
+    <a href="/" class="header-title">9ja News</a>
+</header>
+
+<main class="page-wrapper">
+    <div class="content-container">
+
+        <!-- HERO (LATEST ARTICLE) -->
+        <section class="hero-article">
+            <a href="{{LATEST_URL}}">
+
+                <img src="{{LATEST_IMAGE}}" class="hero-image" alt="{{LATEST_TITLE}}">
+
+                <h1 class="hero-title">
+                    {{LATEST_TITLE}}
+                </h1>
+
+                <p class="hero-snippet">
+                    {{LATEST_DESCRIPTION}}
+                </p>
+
+            </a>
+        </section>
+
+        <!-- GRID (ALL OTHER ARTICLES) -->
+        <section class="article-grid">
+            {{ALL_ARTICLES_GRID}}
+        </section>
+
+    </div>
+</main>
+
+</body>
+</html>
