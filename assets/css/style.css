@@ -1,65 +1,32 @@
 /* 
    ================================================================
-   1. CORE VARIABLES (Simplified)
+   1. GLOBAL STYLES (Applies to all pages)
    ================================================================
 */
 :root {
     --brand-gold: #f7d24e;
-    --site-bg: #f4f4f4; /* Light grey for focus on the content card */
+    --site-bg: #f4f4f4;
     --card-white: #ffffff;
-    --text-main: #1a1a1a; /* Darker for better accessibility/readability */
+    --text-main: #1a1a1a;
     --text-muted: #666666;
     --border-light: #eeeeee;
     --header-height: 56px;
 }
 
-/* 
-   ================================================================
-   2. SYSTEM RESET
-   ================================================================
-*/
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-html {
-    -webkit-text-size-adjust: 100%; /* Prevents font size jump on orientation change */
-}
-
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.6; /* Increased for readability */
+    line-height: 1.6;
     background-color: var(--site-bg);
     color: var(--text-main);
     -webkit-font-smoothing: antialiased;
 }
 
-/* 
-   ================================================================
-   3. LAYOUT & PERFORMANCE
-   ================================================================
-*/
-.page-wrapper {
-    min-height: 100vh;
-    padding-top: calc(var(--header-height) + 16px);
-    padding-bottom: 24px;
-}
-
-/* Removed: ::before and ::after background effects for zero paint lag */
-
-.content-container {
-    max-width: 680px; /* Optimized line length for reading (50-75 chars) */
-    margin: 0 auto;
-    padding: 0 16px;
-}
-
-/* 
-   ================================================================
-   4. HEADER (Solid & Fast)
-   ================================================================
-*/
 .header {
     background-color: var(--brand-gold);
     height: var(--header-height);
@@ -69,29 +36,95 @@ body {
     left: 0;
     display: flex;
     align-items: center;
-    padding: 0 16px;
+    padding: 0 20px;
     z-index: 100;
 }
 
 .header-title {
-    color: #000000; /* High contrast on gold */
-    font-size: 1.15rem;
+    color: #000;
+    font-size: 1.1rem;
     font-weight: 700;
     text-decoration: none;
+    text-transform: uppercase;
+}
+
+.page-wrapper {
+    padding-top: calc(var(--header-height) + 16px);
+    padding-bottom: 40px;
+}
+
+.content-container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.card {
+    background-color: var(--card-white);
+    border-radius: 4px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 /* 
    ================================================================
-   5. ARTICLE CARD (Utility-First)
+   2. HOME PAGE SPECIFIC (Hero + List Feed)
    ================================================================
 */
-.article-card {
-    background-color: var(--card-white);
-    border-radius: 4px; /* Minimalist rounding */
-    padding: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle depth only */
+.hero-article {
+    margin-bottom: 24px;
+    display: block;
+    text-decoration: none;
+    color: inherit;
 }
 
+.hero-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+
+.hero-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #111;
+    line-height: 1.2;
+}
+
+.hero-snippet {
+    font-size: 1rem;
+    color: #555;
+}
+
+.article-list a {
+    display: block;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-light);
+    text-decoration: none;
+    color: inherit;
+}
+
+.article-list a h2 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+    font-weight: 700;
+}
+
+.article-list a p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* 
+   ================================================================
+   3. SINGLE ARTICLE PAGE SPECIFIC
+   ================================================================
+*/
 .main-article-title {
     font-size: 1.85rem;
     font-weight: 800;
@@ -102,49 +135,27 @@ body {
 .main-article-meta {
     font-size: 0.85rem;
     color: var(--text-muted);
-    margin-bottom: 16px;
-    border-bottom: 1px solid var(--border-light);
-    padding-bottom: 12px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
 }
 
-/* 
-   ================================================================
-   6. INNER COMPONENTS
-   ================================================================
-*/
-.featured-image-container {
-    margin: 16px 0;
-    background-color: #f0f0f0;
-    overflow: hidden;
-}
-
-.featured-image {
-    width: 100%;
-    height: auto;
-    display: block;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-}
-
-.article-snippet {
+.article-body {
     font-size: 1.1rem;
+    line-height: 1.7;
     color: #333;
 }
 
+.article-body p {
+    margin-bottom: 1.5rem;
+}
+
 /* 
    ================================================================
-   7. RESPONSIVE UTILITIES
+   4. MOBILE OPTIMIZATIONS
    ================================================================
 */
 @media (max-width: 600px) {
-    .main-article-title {
-        font-size: 1.5rem;
-    }
-    .article-card {
-        padding: 16px;
-        border-radius: 0; /* Full width on mobile to maximize content space */
-    }
-    .content-container {
-        padding: 0; /* Remove side padding on small screens */
-    }
+    .content-container { padding: 0; }
+    .card { border-radius: 0; padding: 16px; }
+    .hero-title { font-size: 1.6rem; }
 }
