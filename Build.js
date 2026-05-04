@@ -4,24 +4,25 @@ const path = require("path");
 const config = require("./site-config.js");
 const articles = JSON.parse(fs.readFileSync("./data/articles.json", "utf-8"));
 
-const articleTpl = fs.readFileSync("./templates/article-template.html", "utf-8");
-const homeTpl = fs.readFileSync("./templates/index-template.html", "utf-8");
+const homeTemplate = fs.readFileSync("./templates/index-template.html", "utf-8");
+const articleTemplate = fs.readFileSync("./templates/article-template.html", "utf-8");
 
-const outDir = "./dist";
+const dist = "./dist";
 const articleOut = "./dist/articles";
 
+fs.mkdirSync(dist, { recursive: true });
 fs.mkdirSync(articleOut, { recursive: true });
 
-/* =========================================================
+/* =========================
    SORT ARTICLES (LATEST FIRST)
-========================================================= */
+========================= */
 const sorted = articles.sort((a, b) =>
   new Date(b.datePublished) - new Date(a.datePublished)
 );
 
-/* =========================================================
+/* =========================
    BUILD ARTICLE PAGES
-========================================================= */
+========================= */
 sorted.forEach(article => {
 
   const canonical = `${config.baseUrl}/articles/${article.slug}.html`;
@@ -30,7 +31,7 @@ sorted.forEach(article => {
     .filter(a => a.slug !== article.slug)
     .slice(0, 2);
 
-  const html = articleTpl
+  const html = articleTemplate
     .replace(/__TITLE__/g, article.title)
     .replace(/__DESCRIPTION__/g, article.description)
     .replace(/__IMAGE_URL__/g, article.image || "")
@@ -49,29 +50,29 @@ sorted.forEach(article => {
   );
 });
 
-/* =========================================================
+/* =========================
    BUILD HOMEPAGE
-========================================================= */
+========================= */
 const latest = sorted[0];
 const rest = sorted.slice(1);
 
-const grid = rest.map(a => `
+const grid = rest.map(article => `
 <div class="grid-item">
-    <a href="/articles/${a.slug}.html">
-        <img src="${a.image}">
-        <h3>${a.title}</h3>
-        <p>${a.description}</p>
+    <a href="/articles/${article.slug}.html">
+        <img src="${article.image}" alt="${article.title}">
+        <h3>${article.title}</h3>
+        <p>${article.description}</p>
     </a>
 </div>
 `).join("");
 
-const home = homeTpl
-  .replace(/__LATEST_URL__/g, `/articles/${latest.slug}.html`)
-  .replace(/__LATEST_IMAGE__/g, latest.image)
-  .replace(/__LATEST_TITLE__/g, latest.title)
-  .replace(/__LATEST_INTRO__/g, latest.description)
-  .replace(/__ARTICLE_LIST__/g, grid);
+const homepage = homeTemplate
+  .replace(/{{LATEST_URL}}/g, `/articles/${latest.slug}.html`)
+  .replace(/{{LATEST_IMAGE}}/g, latest.image)
+  .replace(/{{LATEST_TITLE}}/g, latest.title)
+  .replace(/{{LATEST_DESCRIPTION}}/g, latest.description)
+  .replace(/{{ALL_ARTICLES_GRID}}/g, grid);
 
-fs.writeFileSync(path.join(outDir, "index.html"), home);
+fs.writeFileSync(path.join(dist, "index.html"), homepage);
 
-console.log("Build complete ✔");
+console.log("✅ Build complete - site generated in /dist");
