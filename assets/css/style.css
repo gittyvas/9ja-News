@@ -1,111 +1,150 @@
-/* assets/css/style.css */
+/* 
+   ================================================================
+   1. CORE VARIABLES (Simplified)
+   ================================================================
+*/
 :root {
-    --primary: #90EE90; /* Light Green */
-    --bg-white: #ffffff;
-    --text-dark: #1a1a1a;
-    --border-light: #eee;
-    --gray-bg: #f9f9f9;
+    --brand-gold: #f7d24e;
+    --site-bg: #f4f4f4; /* Light grey for focus on the content card */
+    --card-white: #ffffff;
+    --text-main: #1a1a1a; /* Darker for better accessibility/readability */
+    --text-muted: #666666;
+    --border-light: #eeeeee;
+    --header-height: 56px;
+}
+
+/* 
+   ================================================================
+   2. SYSTEM RESET
+   ================================================================
+*/
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    -webkit-text-size-adjust: 100%; /* Prevents font size jump on orientation change */
 }
 
 body {
-    font-family: 'Inter', Roboto, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: var(--bg-white);
-    color: var(--text-dark);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6; /* Increased for readability */
+    background-color: var(--site-bg);
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
 }
 
-/* 1. Light Green Header */
-header {
-    background-color: var(--primary);
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    position: sticky;
+/* 
+   ================================================================
+   3. LAYOUT & PERFORMANCE
+   ================================================================
+*/
+.page-wrapper {
+    min-height: 100vh;
+    padding-top: calc(var(--header-height) + 16px);
+    padding-bottom: 24px;
+}
+
+/* Removed: ::before and ::after background effects for zero paint lag */
+
+.content-container {
+    max-width: 680px; /* Optimized line length for reading (50-75 chars) */
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+/* 
+   ================================================================
+   4. HEADER (Solid & Fast)
+   ================================================================
+*/
+.header {
+    background-color: var(--brand-gold);
+    height: var(--header-height);
+    width: 100%;
+    position: fixed;
     top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
     z-index: 100;
 }
-.header-logo {
-    font-size: 24px;
-    font-weight: bold;
-    color: white;
+
+.header-title {
+    color: #000000; /* High contrast on gold */
+    font-size: 1.15rem;
+    font-weight: 700;
     text-decoration: none;
 }
-.header-icon { font-size: 20px; cursor: pointer; }
 
-/* 2. Trending Bar */
-.trending-bar {
-    background-color: var(--gray-bg);
+/* 
+   ================================================================
+   5. ARTICLE CARD (Utility-First)
+   ================================================================
+*/
+.article-card {
+    background-color: var(--card-white);
+    border-radius: 4px; /* Minimalist rounding */
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle depth only */
+}
+
+.main-article-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 8px;
+}
+
+.main-article-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
     border-bottom: 1px solid var(--border-light);
-    padding: 5px 20px;
-    font-size: 13px;
-    color: #555;
+    padding-bottom: 12px;
+}
+
+/* 
+   ================================================================
+   6. INNER COMPONENTS
+   ================================================================
+*/
+.featured-image-container {
+    margin: 16px 0;
+    background-color: #f0f0f0;
     overflow: hidden;
-    white-space: nowrap;
 }
 
-/* Ad Placements */
-.ad-container {
-    background-color: var(--gray-bg);
-    border: 1px solid var(--border-light);
-    margin: 20px auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: #888;
-}
-.ad-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-}
-.ad-leaderboard { width: 100%; max-width: 728px; height: 90px; }
-.ad-infeed { width: 100%; max-width: 300px; height: 250px; }
-.ad-sidebar { width: 300px; height: 600px; margin-top: 0; }
-
-/* Mobile Ad Adjustments */
-@media (max-width: 768px) {
-    .ad-leaderboard { max-width: 320px; height: 50px; }
-    .ad-sidebar { display: none; }
+.featured-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
 }
 
-/* Typography & Cleanliness */
-main { max-width: 1000px; margin: 0 auto; padding: 20px; }
-h1, h2, h3 { margin: 0; }
-a { color: inherit; text-decoration: none; }
-
-/* Layouts */
-.hero { margin-bottom: 30px; }
-.hero img { width: 100%; height: auto; max-height: 450px; object-fit: cover; }
-.hero h1 { font-size: 32px; margin-top: 15px; }
-
-.feed-list { display: flex; flex-direction: column; gap: 15px; margin-top: 15px; }
-.news-card {
-    display: flex;
-    gap: 15px;
-    border-bottom: 1px solid var(--border-light);
-    padding-bottom: 15px;
+.article-snippet {
+    font-size: 1.1rem;
+    color: #333;
 }
-.news-card img { width: 120px; height: 80px; object-fit: cover; background: var(--border-light); }
-.news-card-content h3 { font-size: 18px; margin-bottom: 5px; }
-.news-card-content p { font-size: 14px; color: #666; margin: 0; }
 
-section { margin-top: 40px; }
-section h2 { border-left: 4px solid var(--primary); padding-left: 10px; font-size: 22px; }
-
-/* Article Template Grid */
-.article-grid { display: grid; grid-template-columns: 1fr 300px; gap: 30px; }
-@media (max-width: 768px) { .article-grid { grid-template-columns: 1fr; } }
-
-/* Footer */
-footer {
-    border-top: 1px solid var(--border-light);
-    text-align: center;
-    padding: 30px 20px;
-    margin-top: 40px;
-    font-size: 14px;
+/* 
+   ================================================================
+   7. RESPONSIVE UTILITIES
+   ================================================================
+*/
+@media (max-width: 600px) {
+    .main-article-title {
+        font-size: 1.5rem;
+    }
+    .article-card {
+        padding: 16px;
+        border-radius: 0; /* Full width on mobile to maximize content space */
+    }
+    .content-container {
+        padding: 0; /* Remove side padding on small screens */
+    }
 }
-footer a { margin: 0 10px; color: #555; }
