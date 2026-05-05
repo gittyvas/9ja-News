@@ -58,8 +58,8 @@
     }
     </script>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- CSS (FIXED PATH) -->
+    <link rel="stylesheet" href="assets/css/style.css">
 
 </head>
 
@@ -67,7 +67,7 @@
 
 <!-- HEADER -->
 <header class="header">
-    <a href="/" class="header-title">9ja News</a>
+    <a href="index.html" class="header-title">9ja News</a>
 </header>
 
 <!-- PAGE WRAPPER -->
@@ -76,24 +76,30 @@
 
         <article class="article-card">
 
+            <!-- TITLE -->
             <h1 class="main-article-title">__TITLE__</h1>
 
+            <!-- META -->
             <div class="main-article-meta">
                 By Ifeanyi Clement Okoye • __DISPLAY_DATE__
             </div>
 
+            <!-- FEATURE IMAGE -->
             <div class="featured-image-container">
-                <img src="__IMAGE_URL__" alt="__TITLE__" class="featured-image">
+                <img src="__IMAGE_URL__" alt="__TITLE__" class="featured-image" loading="eager">
             </div>
 
+            <!-- INTRO -->
             <p class="article-snippet">
                 __INTRO_PARAGRAPH__
             </p>
 
+            <!-- CONTENT -->
             <div class="article-body">
                 __CONTENT__
             </div>
 
+            <!-- RELATED -->
             <div class="sub-card">
                 <div class="sub-card-header">Related Articles</div>
 
@@ -106,8 +112,8 @@
     </div>
 </main>
 
-<!-- JS -->
-<script src="/assets/js/script.js"></script>
+<!-- JS (FIXED PATH) -->
+<script src="assets/js/script.js"></script>
 
 </body>
 </html>
