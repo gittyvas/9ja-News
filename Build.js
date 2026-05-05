@@ -10,6 +10,7 @@ const articleTemplate = fs.readFileSync("./templates/article-template.html", "ut
 const distDir = "./dist";
 const articleOut = "./dist/articles";
 
+// ensure folders exist
 fs.mkdirSync(distDir, { recursive: true });
 fs.mkdirSync(articleOut, { recursive: true });
 
@@ -22,7 +23,7 @@ function scoreArticle(article) {
   const daysOld =
     (Date.now() - new Date(article.datePublished)) / (1000 * 60 * 60 * 24);
 
-  // freshness boost (newer = higher score)
+  // freshness boost
   score += Math.max(0, 10 - daysOld);
 
   // quality signals
@@ -34,7 +35,7 @@ function scoreArticle(article) {
 }
 
 /* =========================================================
-   2. PREPARE ARTICLES (WITH SCORES)
+   2. PREPARE ARTICLES
 ========================================================= */
 const ranked = articles
   .map(a => ({ ...a, score: scoreArticle(a) }))
@@ -68,8 +69,8 @@ ranked.forEach(article => {
     .replace(/__DATE_MODIFIED__/g, article.dateModified || article.datePublished)
     .replace(/__DISPLAY_DATE__/g, new Date(article.datePublished).toDateString())
     .replace(/__CANONICAL_URL__/g, canonical)
-    .replace(/__RELATED_1__/g, related[0] ? `/articles/${related[0].slug}.html` : "/")
-    .replace(/__RELATED_2__/g, related[1] ? `/articles/${related[1].slug}.html` : "/");
+    .replace(/__RELATED_1__/g, related[0] ? `articles/${related[0].slug}.html` : "#")
+    .replace(/__RELATED_2__/g, related[1] ? `articles/${related[1].slug}.html` : "#");
 
   fs.writeFileSync(
     path.join(articleOut, `${article.slug}.html`),
@@ -85,8 +86,8 @@ const rest = ranked.slice(1);
 
 const grid = rest.map(article => `
 <div class="grid-item">
-    <a href="/articles/${article.slug}.html">
-        <img src="${article.image}" alt="${article.title}">
+    <a href="articles/${article.slug}.html">
+        <img src="${article.image}" alt="${article.title}" loading="lazy">
         <h3>${article.title}</h3>
         <p>${article.description}</p>
     </a>
@@ -94,7 +95,7 @@ const grid = rest.map(article => `
 `).join("");
 
 const homepage = homeTemplate
-  .replace(/{{LATEST_URL}}/g, `/articles/${latest.slug}.html`)
+  .replace(/{{LATEST_URL}}/g, `articles/${latest.slug}.html`)
   .replace(/{{LATEST_IMAGE}}/g, latest.image)
   .replace(/{{LATEST_TITLE}}/g, latest.title)
   .replace(/{{LATEST_DESCRIPTION}}/g, latest.description)
@@ -108,4 +109,30 @@ fs.writeFileSync(
   homepage
 );
 
+/* =========================================================
+   7. COPY ASSETS (CRITICAL)
+========================================================= */
+function copyFolder(src, dest) {
+  if (!fs.existsSync(src)) return;
+
+  fs.mkdirSync(dest, { recursive: true });
+
+  fs.readdirSync(src).forEach(file => {
+    const srcPath = path.join(src, file);
+    const destPath = path.join(dest, file);
+
+    if (fs.lstatSync(srcPath).isDirectory()) {
+      copyFolder(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  });
+}
+
+// copy assets → dist
+copyFolder("./assets", "./dist/assets");
+
+/* =========================================================
+   DONE
+========================================================= */
 console.log("✅ BUILD COMPLETE — SITE GENERATED IN /dist");
