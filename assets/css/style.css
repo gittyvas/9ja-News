@@ -27,6 +27,13 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+/* GLOBAL IMAGE RESET - Crucial for mobile responsiveness */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
 .header {
     background-color: var(--brand-gold);
     height: var(--header-height);
@@ -155,7 +162,41 @@ body {
    ================================================================
 */
 @media (max-width: 600px) {
-    .content-container { padding: 0; }
-    .card { border-radius: 0; padding: 16px; }
-    .hero-title { font-size: 1.6rem; }
+    /* Kept the padding so text doesn't touch the edges */
+    .content-container { 
+        padding: 0 16px; 
+        width: 100%;
+    }
+    
+    /* Removed shadows and border-radius for a cleaner mobile look */
+    .card { 
+        border-radius: 0; 
+        padding: 16px 0; /* Removes side padding inside the card */
+        margin-bottom: 16px;
+        box-shadow: none; 
+        border-bottom: 1px solid var(--border-light);
+        background-color: transparent;
+    }
+    
+    /* Pulls images to the absolute edges of the phone screen */
+    .hero-image, .featured-image-container img {
+        border-radius: 0; 
+        margin-left: -16px; 
+        width: calc(100% + 32px);
+        max-width: none;
+    }
+
+    /* Scales down massive titles so they don't take up the whole screen */
+    .hero-title { 
+        font-size: 1.6rem; 
+    }
+
+    .main-article-title {
+        font-size: 1.5rem;
+    }
+
+    /* Adjusts reading text size for thumbs and small screens */
+    .article-body {
+        font-size: 1rem;
+    }
 }
